@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/localization_service.dart';
 
 enum BmiCategory {
   underweight,
@@ -23,13 +24,26 @@ class BmiResult {
   String get categoryText {
     switch (category) {
       case BmiCategory.underweight:
-        return 'Underweight';
+        return LocalizationService.underweight;
       case BmiCategory.normal:
-        return 'Normal';
+        return LocalizationService.normal;
       case BmiCategory.overweight:
-        return 'Overweight';
+        return LocalizationService.overweight;
       case BmiCategory.obese:
-        return 'Obese';
+        return LocalizationService.obese;
+    }
+  }
+
+  String get localizedAdvice {
+    switch (category) {
+      case BmiCategory.underweight:
+        return LocalizationService.underweightAdvice;
+      case BmiCategory.normal:
+        return LocalizationService.normalAdvice;
+      case BmiCategory.overweight:
+        return LocalizationService.overweightAdvice;
+      case BmiCategory.obese:
+        return LocalizationService.obeseAdvice;
     }
   }
 }

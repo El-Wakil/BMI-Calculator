@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/bmi_data.dart';
 import '../services/bmi_calculator_service.dart';
+import '../services/localization_service.dart';
 import '../widgets/gradient_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../constants/app_constants.dart';
@@ -13,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool isMale = true;
-  int age = 25;
+  int age = 1;
 
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
@@ -75,44 +76,190 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
+  void _changeLanguage() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.cardBackground,
+          title: Text(
+            LocalizationService.changeLanguage,
+            style: AppTextStyles.subtitle,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.language, color: Colors.white),
+                title: Text(LocalizationService.english,
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _setLanguage(AppLanguage.english);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.language, color: Colors.white),
+                title: Text(LocalizationService.arabic,
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _setLanguage(AppLanguage.arabic);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _setLanguage(AppLanguage language) {
+    setState(() {
+      LocalizationService.setLanguage(language);
+    });
+    String languageName =
+        language == AppLanguage.arabic ? 'العربية' : 'English';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(LocalizationService.languageChanged(languageName)),
+        backgroundColor: AppColors.primary,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showAgeInput() {
+    final TextEditingController ageController =
+        TextEditingController(text: age.toString());
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Directionality(
+          textDirection: LocalizationService.textDirection,
+          child: AlertDialog(
+            backgroundColor: AppColors.cardBackground,
+            title: Text(
+              LocalizationService.age,
+              style: AppTextStyles.subtitle,
+              textAlign: TextAlign.center,
+            ),
+            content: Container(
+              width: 150,
+              child: TextField(
+                controller: ageController,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: AppColors.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: AppColors.primary, width: 2),
+                  ),
+                  fillColor: AppColors.cardSurface,
+                  filled: true,
+                ),
+                onSubmitted: (value) {
+                  _updateAgeFromInput(ageController.text);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  LocalizationService.isArabic ? 'إلغاء' : 'Cancel',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  _updateAgeFromInput(ageController.text);
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  LocalizationService.isArabic ? 'موافق' : 'OK',
+                  style: TextStyle(color: AppColors.primary),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _updateAgeFromInput(String input) {
+    final int? newAge = int.tryParse(input);
+    if (newAge != null && newAge >= 1 && newAge <= 100) {
+      setState(() {
+        age = newAge;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            LocalizationService.isArabic
+                ? 'يرجى إدخال عمر صحيح (1-100)'
+                : 'Please enter a valid age (1-100)',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: _buildAppBar(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppColors.background, AppColors.surface],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+    return Directionality(
+      textDirection: LocalizationService.textDirection,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.background, AppColors.surface],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top -
-                    MediaQuery.of(context).padding.bottom -
-                    kToolbarHeight,
-              ),
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        _buildGenderSelection(),
-                        SizedBox(height: 25),
-                        _buildInputFields(),
-                        SizedBox(height: 25),
-                        _buildAgeSection(),
-                        SizedBox(height: 40),
-                        _buildCalculateButton(),
-                      ],
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top -
+                      MediaQuery.of(context).padding.bottom -
+                      kToolbarHeight,
+                ),
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          _buildGenderSelection(),
+                          SizedBox(height: 20),
+                          _buildInputFields(),
+                          SizedBox(height: 20),
+                          _buildAgeSection(),
+                          SizedBox(height: 18),
+                          _buildCalculateButton(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -130,9 +277,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       elevation: 0,
       centerTitle: true,
       title: Text(
-        'BMI CALCULATOR',
+        LocalizationService.appTitle,
         style: AppTextStyles.title,
       ),
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.language,
+            color: Colors.white,
+            size: 24,
+          ),
+          onPressed: _changeLanguage,
+          tooltip: 'Change Language',
+        ),
+        SizedBox(width: 8),
+      ],
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -150,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       children: [
         Expanded(
           child: _buildGenderCard(
-            'MALE',
+            LocalizationService.male,
             Icons.male,
             true,
             AppColors.maleColor,
@@ -159,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         SizedBox(width: 20),
         Expanded(
           child: _buildGenderCard(
-            'FEMALE',
+            LocalizationService.female,
             Icons.female,
             false,
             AppColors.femaleColor,
@@ -181,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       },
       child: AnimatedContainer(
         duration: Duration(milliseconds: 300),
-        height: 180,
+        height: 160,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: isSelected
@@ -226,34 +385,36 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Column(
       children: [
         CustomTextField(
-          hint: '170.5',
-          label: 'Height (cm)',
+          hint: LocalizationService.heightPlaceholder,
+          label:
+              '${LocalizationService.height} ${LocalizationService.heightUnit}',
           controller: heightController,
           keyboardType: TextInputType.numberWithOptions(decimal: true),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter height';
+              return LocalizationService.pleaseEnterHeight;
             }
             final height = double.tryParse(value);
             if (height == null || height <= 0) {
-              return 'Please enter a valid height';
+              return LocalizationService.pleaseEnterValidHeight;
             }
             return null;
           },
         ),
         SizedBox(height: 20),
         CustomTextField(
-          hint: '77.5',
-          label: 'Weight (kg)',
+          hint: LocalizationService.weightPlaceholder,
+          label:
+              '${LocalizationService.weight} ${LocalizationService.weightUnit}',
           controller: weightController,
           keyboardType: TextInputType.numberWithOptions(decimal: true),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter weight';
+              return LocalizationService.pleaseEnterWeight;
             }
             final weight = double.tryParse(value);
             if (weight == null || weight <= 0) {
-              return 'Please enter a valid weight';
+              return LocalizationService.pleaseEnterValidWeight;
             }
             return null;
           },
@@ -284,7 +445,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: Column(
         children: [
           Text(
-            'AGE',
+            LocalizationService.age,
             style: AppTextStyles.caption.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -292,12 +453,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           ),
           SizedBox(height: 20),
-          Text(
-            '$age',
-            style: TextStyle(
-              fontSize: 60,
-              fontWeight: FontWeight.w900,
-              color: Colors.white,
+          GestureDetector(
+            onTap: _showAgeInput,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.white.withOpacity(0.1),
+                border:
+                    Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+              ),
+              child: Text(
+                '$age',
+                style: TextStyle(
+                  fontSize: 60,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
           SizedBox(height: 20),
@@ -359,7 +532,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget _buildCalculateButton() {
     return GradientButton(
-      text: 'CALCULATE BMI',
+      text: LocalizationService.calculateBmi,
       onPressed: _calculateBmi,
       gradientColors: [AppColors.primary, Color(0xFF1976D2)],
     );

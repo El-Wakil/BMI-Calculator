@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/bmi_data.dart';
 import '../models/bmi_result.dart';
+import '../services/localization_service.dart';
 import '../widgets/gradient_button.dart';
 import '../widgets/info_card.dart';
 import '../constants/app_constants.dart';
@@ -62,47 +63,50 @@ class _ResultScreenState extends State<ResultScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: _buildAppBar(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppColors.background, AppColors.surface],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+    return Directionality(
+      textDirection: LocalizationService.textDirection,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.background, AppColors.surface],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top -
-                    MediaQuery.of(context).padding.bottom -
-                    kToolbarHeight,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildBmiCircle(),
-                          SizedBox(height: 40),
-                          _buildCategoryBadge(),
-                          SizedBox(height: 30),
-                          _buildInfoCards(),
-                          SizedBox(height: 30),
-                          _buildAdviceCard(),
-                        ],
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top -
+                      MediaQuery.of(context).padding.bottom -
+                      kToolbarHeight,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildBmiCircle(),
+                            SizedBox(height: 25),
+                            _buildCategoryBadge(),
+                            SizedBox(height: 20),
+                            _buildInfoCards(),
+                            SizedBox(height: 20),
+                            _buildAdviceCard(),
+                          ],
+                        ),
                       ),
-                    ),
-                    _buildRecalculateButton(),
-                  ],
+                      _buildRecalculateButton(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -121,7 +125,7 @@ class _ResultScreenState extends State<ResultScreen>
         icon: Icon(Icons.arrow_back_ios, color: Colors.white),
       ),
       centerTitle: true,
-      title: Text('BMI RESULT', style: AppTextStyles.title),
+      title: Text(LocalizationService.yourResult, style: AppTextStyles.title),
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -212,8 +216,10 @@ class _ResultScreenState extends State<ResultScreen>
       children: [
         Expanded(
           child: InfoCard(
-            title: 'Gender',
-            value: widget.bmiData.isMale ? 'Male' : 'Female',
+            title: LocalizationService.isArabic ? 'الجنس' : 'Gender',
+            value: widget.bmiData.isMale
+                ? (LocalizationService.isArabic ? 'ذكر' : 'Male')
+                : (LocalizationService.isArabic ? 'أنثى' : 'Female'),
             icon: widget.bmiData.isMale ? Icons.male : Icons.female,
             color: widget.bmiData.isMale
                 ? AppColors.maleColor
@@ -223,8 +229,10 @@ class _ResultScreenState extends State<ResultScreen>
         SizedBox(width: 15),
         Expanded(
           child: InfoCard(
-            title: 'Age',
-            value: '${widget.bmiData.age} years',
+            title: LocalizationService.isArabic ? 'العمر' : 'Age',
+            value: LocalizationService.isArabic
+                ? '${widget.bmiData.age} سنة'
+                : '${widget.bmiData.age} years',
             icon: Icons.cake,
             color: Color(0xFF66BB6A),
           ),
@@ -263,14 +271,14 @@ class _ResultScreenState extends State<ResultScreen>
               ),
               SizedBox(width: 10),
               Text(
-                'Health Advice',
+                LocalizationService.healthAdvice,
                 style: AppTextStyles.subtitle,
               ),
             ],
           ),
           SizedBox(height: 15),
           Text(
-            widget.bmiResult.advice,
+            widget.bmiResult.localizedAdvice,
             style: AppTextStyles.body.copyWith(height: 1.5),
             textAlign: TextAlign.center,
           ),
@@ -283,7 +291,7 @@ class _ResultScreenState extends State<ResultScreen>
     return Container(
       margin: EdgeInsets.only(top: 20),
       child: GradientButton(
-        text: 'RECALCULATE BMI',
+        text: LocalizationService.recalculate,
         onPressed: () => Navigator.pop(context),
         gradientColors: [AppColors.primary, Color(0xFF1976D2)],
       ),
