@@ -11,6 +11,7 @@ This Privacy Policy describes how the BMI Calculator app ("we", "our", or "us") 
 ## Information We Do Not Collect
 
 ### Personal Information
+
 - We do not collect any personally identifiable information such as:
   - Name, email address, or contact information
   - Location data or GPS coordinates
@@ -18,12 +19,14 @@ This Privacy Policy describes how the BMI Calculator app ("we", "our", or "us") 
   - User accounts or profiles
 
 ### BMI Calculation Data
+
 - All BMI calculations are performed locally on your device
 - Your height, weight, age, and gender inputs are NOT stored or transmitted
 - BMI results are NOT saved or shared with any third parties
 - All data is processed in real-time and discarded after calculation
 
 ### Device Information
+
 - We do not collect device information such as:
   - Device model, operating system, or version
   - IP address or network information
@@ -31,6 +34,7 @@ This Privacy Policy describes how the BMI Calculator app ("we", "our", or "us") 
   - Crash reports or diagnostic data
 
 ### Third-Party Services
+
 - We do not use any third-party analytics services
 - We do not integrate with social media platforms
 - We do not use advertising networks or tracking services
@@ -46,6 +50,7 @@ This Privacy Policy describes how the BMI Calculator app ("we", "our", or "us") 
 ## Data Security
 
 Since we do not collect any data:
+
 - There is no user data to be compromised
 - No risk of data breaches or unauthorized access
 - No need for data encryption or transmission security
@@ -66,6 +71,7 @@ This privacy policy applies to users worldwide. Since we do not collect any data
 ## Your Rights
 
 Since we do not collect any personal data:
+
 - There is no data to access, modify, or delete
 - No data portability requests are applicable
 - No opt-out procedures are necessary
@@ -74,6 +80,7 @@ Since we do not collect any personal data:
 ## Permissions
 
 Our app may request the following device permissions:
+
 - **Internet**: Only used for app updates (no data transmission)
 - **Storage**: Not used for data collection (only for app functionality)
 
@@ -90,6 +97,7 @@ If you have any questions about this Privacy Policy, please contact us at:
 ## Compliance
 
 This privacy policy is designed to comply with:
+
 - General Data Protection Regulation (GDPR)
 - California Consumer Privacy Act (CCPA)
 - Children's Online Privacy Protection Act (COPPA)
@@ -109,4 +117,4 @@ This privacy policy is designed to comply with:
 
 ---
 
-*This Privacy Policy is effective as of September 27, 2025, and will remain in effect except with respect to any changes in its provisions in the future, which will be in effect immediately after being posted on this page.*
+_This Privacy Policy is effective as of September 27, 2025, and will remain in effect except with respect to any changes in its provisions in the future, which will be in effect immediately after being posted on this page._
